@@ -1,0 +1,22 @@
+{
+    "name": "zalas/bundle-test",
+    "description": "Tools for testing Symfony Bundles",
+    "type": "library",
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^6.5"
+    },
+    "autoload": {
+        "psr-4": { "Zalas\\BundleTest\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "Zalas\\BundleTest\\Tests\\": "tests/" }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jakub Zalas",
+            "email": "jakub@zalas.pl"
+        }
+    ]
+}
