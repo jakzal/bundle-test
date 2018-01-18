@@ -39,6 +39,11 @@ class KernelConfiguration
      */
     private $namespace;
 
+    /**
+     * @var string[]
+     */
+    private $publicServiceIds = [];
+
     public function __construct(string $namespace = self::DEFAULT_NAMESPACE)
     {
         $this->namespace = $namespace;
@@ -97,6 +102,24 @@ class KernelConfiguration
         return $config;
     }
 
+    public function withPublicServiceId(string $serviceId): self
+    {
+        $config = clone $this;
+        $config->publicServiceIds[] = $serviceId;
+
+        return $config;
+    }
+
+    /**
+     * @param string[] $serviceIds
+     */
+    public function withPublicServiceIds(array $serviceIds): self
+    {
+        return array_reduce($serviceIds, function (self $config, string $serviceId) {
+            return $config->withPublicServiceId($serviceId);
+        }, $this);
+    }
+
     /**
      * Computes an unique identifier of the current configuration.
      *
@@ -112,7 +135,8 @@ class KernelConfiguration
             }, $this->getBundles()),
             $this->getAllBundleConfigurations(),
             $this->tempDir,
-            $this->namespace
+            $this->namespace,
+            $this->getPublicServiceIds(),
         ]));
     }
 
@@ -152,5 +176,13 @@ class KernelConfiguration
     final public function getLogDir(): string
     {
         return sprintf('%s/var/log', $this->getTempDir());
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getPublicServiceIds(): array
+    {
+        return $this->publicServiceIds;
     }
 }

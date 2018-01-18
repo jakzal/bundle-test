@@ -134,6 +134,35 @@ class KernelConfigurationTest extends TestCase
         $this->assertSame($logDir, $config->getLogDir());
     }
 
+    public function test_a_new_object_is_created_if_a_public_service_is_configured()
+    {
+        $config = new KernelConfiguration();
+        $newConfig = $config->withPublicServiceId('foo.bar');
+
+        $this->assertNotSame($config, $newConfig);
+        $this->assertEmpty($config->getPublicServiceIds());
+        $this->assertSame(['foo.bar'], $newConfig->getPublicServiceIds());
+    }
+
+    public function test_a_new_object_is_created_if_public_services_are_configured()
+    {
+        $config = new KernelConfiguration();
+        $newConfig = $config->withPublicServiceIds(['foo.bar']);
+
+        $this->assertNotSame($config, $newConfig);
+        $this->assertEmpty($config->getPublicServiceIds());
+        $this->assertSame(['foo.bar'], $newConfig->getPublicServiceIds());
+    }
+
+    public function test_public_service_id_configurations_are_appended_to_the_previously_added_ones()
+    {
+        $config = (new KernelConfiguration())
+            ->withPublicServiceId('foo.bar1')
+            ->withPublicServiceId('foo.bar2');
+
+        $this->assertSame(['foo.bar1', 'foo.bar2'], $config->getPublicServiceIds());
+    }
+
     public function test_the_hash_is_the_same_for_same_environments()
     {
         $config1 = new KernelConfiguration();
@@ -204,10 +233,16 @@ class KernelConfigurationTest extends TestCase
         $this->assertNotSameHash(new KernelConfiguration('foo1'), new KernelConfiguration('foo2'));
     }
 
-    public function test_the_has_is_unique_per_temp_dir()
+    public function test_the_hash_is_unique_per_temp_dir()
     {
         $this->assertSameHash((new KernelConfiguration())->withTempDir('/tmp'), (new KernelConfiguration())->withTempDir('/tmp'));
         $this->assertNotSameHash((new KernelConfiguration())->withTempDir('/tmp'), new KernelConfiguration());
+    }
+
+    public function test_the_hash_is_unique_per_public_service_id_collection()
+    {
+        $this->assertSameHash((new KernelConfiguration())->withPublicServiceId('foo.bar'), (new KernelConfiguration())->withPublicServiceId('foo.bar'));
+        $this->assertNotSameHash((new KernelConfiguration())->withPublicServiceId('foo.bar1'), (new KernelConfiguration())->withPublicServiceId('foo.bar2'));
     }
 
     private function assertSameHash(KernelConfiguration $conf1, KernelConfiguration $conf2)

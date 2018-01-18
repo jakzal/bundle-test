@@ -3,6 +3,8 @@
 namespace Zalas\BundleTest\HttpKernel;
 
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel;
 
@@ -38,11 +40,42 @@ class TestKernel extends Kernel
         return $this->configuration->getLogDir();
     }
 
-    /**
-     * Loads the container configuration.
-     */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        // TODO: Implement registerContainerConfiguration() method.
+        $loader->load(function (ContainerBuilder $container) {
+            $this->loadExtensionConfigurations($container);
+        });
+        $loader->load(function (ContainerBuilder $container) {
+            $this->makeServicesPublic($container);
+        });
+    }
+
+    private function loadExtensionConfigurations(ContainerBuilder $container)
+    {
+        foreach ($this->configuration->getAllBundleConfigurations() as $extension => $configuration) {
+            $container->loadFromExtension($extension, $configuration);
+        }
+    }
+
+    private function makeServicesPublic(ContainerBuilder $container)
+    {
+        $container->addCompilerPass(
+            new class($this->configuration) implements CompilerPassInterface
+            {
+                private $configuration;
+
+                public function __construct(KernelConfiguration $configuration)
+                {
+                    $this->configuration = $configuration;
+                }
+
+                public function process(ContainerBuilder $container)
+                {
+                    foreach ($this->configuration->getPublicServiceIds() as $serviceId) {
+                        $container->getDefinition($serviceId)->setPublic(true);
+                    }
+                }
+            }
+        );
     }
 }
