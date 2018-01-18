@@ -34,4 +34,13 @@ class TestKernelTest extends TestCase
 
         $this->assertSame([$fooBundle], $kernel->registerBundles());
     }
+
+    public function test_cache_and_log_dirs_are_read_from_the_kernel_configuration()
+    {
+        $config = new KernelConfiguration();
+        $kernel = new TestKernel($config);
+
+        $this->assertSame($config->getCacheDir(), $kernel->getCacheDir());
+        $this->assertSame($config->getLogDir(), $kernel->getLogDir());
+    }
 }

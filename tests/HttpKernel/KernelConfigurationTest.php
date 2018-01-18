@@ -91,6 +91,49 @@ class KernelConfigurationTest extends TestCase
         $this->assertSame(['foo' => ['enabled' => true, 'foos' => ['foo1', 'foo2']]], $config->getAllBundleConfigurations());
     }
 
+    public function test_a_new_object_is_created_if_the_temp_dir_is_changed()
+    {
+        $config = new KernelConfiguration();
+        $newConfig = $config->withTempDir('/tmp');
+
+        $this->assertNotSame($config, $newConfig);
+    }
+
+    public function test_the_temp_dir_is_scoped_by_the_configuration_hash()
+    {
+        $config = new KernelConfiguration();
+        $newConfig = $config->withTempDir('/tmp');
+
+        $tempDir = sys_get_temp_dir().'/'.KernelConfiguration::DEFAULT_NAMESPACE.'/'.$config->getHash();
+        $newTempDir = '/tmp/'.KernelConfiguration::DEFAULT_NAMESPACE.'/'.$newConfig->getHash();
+
+        $this->assertSame($tempDir, $config->getTempDir());
+        $this->assertSame($newTempDir, $newConfig->getTempDir());
+    }
+
+    public function test_the_namespace_can_be_customised()
+    {
+        $config = (new KernelConfiguration('Foo'))->withTempDir('/tmp');
+
+        $this->assertSame('/tmp/Foo/'.$config->getHash(), $config->getTempDir());
+    }
+
+    public function test_the_cache_dir_is_in_the_temp_dir()
+    {
+        $config = (new KernelConfiguration('Foo'))->withEnvironment('foo')->withTempDir('/tmp');
+        $cacheDir = sprintf('/tmp/Foo/%s/var/cache/foo', $config->getHash());
+
+        $this->assertSame($cacheDir, $config->getCacheDir());
+    }
+
+    public function test_the_log_dir_is_in_the_temp_dir()
+    {
+        $config = (new KernelConfiguration('Foo'))->withEnvironment('foo')->withTempDir('/tmp');
+        $logDir = sprintf('/tmp/Foo/%s/var/log', $config->getHash());
+
+        $this->assertSame($logDir, $config->getLogDir());
+    }
+
     public function test_the_hash_is_the_same_for_same_environments()
     {
         $config1 = new KernelConfiguration();
@@ -153,6 +196,18 @@ class KernelConfigurationTest extends TestCase
         $config2 = (new KernelConfiguration())->withBundleConfiguration('foo', ['enabled' => false]);
 
         $this->assertNotSameHash($config1, $config2);
+    }
+
+    public function test_the_hash_is_unique_per_namespace()
+    {
+        $this->assertSameHash(new KernelConfiguration('foo1'), new KernelConfiguration('foo1'));
+        $this->assertNotSameHash(new KernelConfiguration('foo1'), new KernelConfiguration('foo2'));
+    }
+
+    public function test_the_has_is_unique_per_temp_dir()
+    {
+        $this->assertSameHash((new KernelConfiguration())->withTempDir('/tmp'), (new KernelConfiguration())->withTempDir('/tmp'));
+        $this->assertNotSameHash((new KernelConfiguration())->withTempDir('/tmp'), new KernelConfiguration());
     }
 
     private function assertSameHash(KernelConfiguration $conf1, KernelConfiguration $conf2)

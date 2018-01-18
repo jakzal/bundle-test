@@ -28,6 +28,16 @@ class TestKernel extends Kernel
         return $this->configuration->getBundles();
     }
 
+    public function getCacheDir()
+    {
+        return $this->configuration->getCacheDir();
+    }
+
+    public function getLogDir()
+    {
+        return $this->configuration->getLogDir();
+    }
+
     /**
      * Loads the container configuration.
      */

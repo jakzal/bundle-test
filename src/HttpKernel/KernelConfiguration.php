@@ -7,6 +7,7 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 class KernelConfiguration
 {
     const DEFAULT_ENVIRONMENT = 'test';
+    const DEFAULT_NAMESPACE = 'tests';
 
     /**
      * @var string
@@ -27,6 +28,21 @@ class KernelConfiguration
      * @var array
      */
     protected $bundleConfigurations = [];
+
+    /**
+     * @var string|null
+     */
+    protected $tempDir;
+
+    /**
+     * @var string
+     */
+    private $namespace;
+
+    public function __construct(string $namespace = self::DEFAULT_NAMESPACE)
+    {
+        $this->namespace = $namespace;
+    }
 
     public function withEnvironment(string $environment): self
     {
@@ -73,15 +89,30 @@ class KernelConfiguration
         return $config;
     }
 
-    public function getHash()
+    public function withTempDir(string $tempDir): self
+    {
+        $config = clone $this;
+        $config->tempDir = $tempDir;
+
+        return $config;
+    }
+
+    /**
+     * Computes an unique identifier of the current configuration.
+     *
+     * Cache will be scoped (so also refreshed) based on this value.
+     */
+    public function getHash(): string
     {
         return sha1(serialize([
-            $this->environment,
-            $this->debug,
+            $this->getEnvironment(),
+            $this->isDebug(),
             array_map(function (BundleInterface $bundle) {
                 return get_class($bundle);
-            }, $this->bundles),
-            $this->bundleConfigurations
+            }, $this->getBundles()),
+            $this->getAllBundleConfigurations(),
+            $this->tempDir,
+            $this->namespace
         ]));
     }
 
@@ -106,5 +137,20 @@ class KernelConfiguration
     public function getAllBundleConfigurations(): array
     {
         return $this->bundleConfigurations;
+    }
+
+    public function getTempDir(): string
+    {
+        return sprintf('%s/%s/%s', $this->tempDir ?? sys_get_temp_dir(), $this->namespace, $this->getHash());
+    }
+
+    final public function getCacheDir(): string
+    {
+        return sprintf('%s/var/cache/%s', $this->getTempDir(), $this->environment);
+    }
+
+    final public function getLogDir(): string
+    {
+        return sprintf('%s/var/log', $this->getTempDir());
     }
 }
