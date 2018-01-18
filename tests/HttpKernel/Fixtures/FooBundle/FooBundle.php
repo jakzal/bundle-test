@@ -1,6 +1,6 @@
 <?php
 
-namespace Zalas\BundleTest\Tests\HttpKernel\Fixtures;
+namespace Zalas\BundleTest\Tests\HttpKernel\Fixtures\FooBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

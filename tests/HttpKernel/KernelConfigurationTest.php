@@ -4,8 +4,8 @@ namespace Zalas\BundleTest\Tests\HttpKernel;
 
 use PHPUnit\Framework\TestCase;
 use Zalas\BundleTest\HttpKernel\KernelConfiguration;
-use Zalas\BundleTest\Tests\HttpKernel\Fixtures\BarBundle;
-use Zalas\BundleTest\Tests\HttpKernel\Fixtures\FooBundle;
+use Zalas\BundleTest\Tests\HttpKernel\Fixtures\BarBundle\BarBundle;
+use Zalas\BundleTest\Tests\HttpKernel\Fixtures\FooBundle\FooBundle;
 
 class KernelConfigurationTest extends TestCase
 {

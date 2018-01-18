@@ -6,7 +6,8 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Zalas\BundleTest\HttpKernel\KernelConfiguration;
 use Zalas\BundleTest\HttpKernel\TestKernel;
 use PHPUnit\Framework\TestCase;
-use Zalas\BundleTest\Tests\HttpKernel\Fixtures\FooBundle;
+use Zalas\BundleTest\Tests\HttpKernel\Fixtures\BarBundle\BarBundle;
+use Zalas\BundleTest\Tests\HttpKernel\Fixtures\FooBundle\FooBundle;
 
 class TestKernelTest extends TestCase
 {
