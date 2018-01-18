@@ -2,7 +2,11 @@
     "name": "zalas/bundle-test",
     "description": "Tools for testing Symfony Bundles",
     "type": "library",
-    "require": {},
+    "require": {
+        "php": "^7.1",
+        "symfony/http-kernel": "^3.4 || ^4.0",
+        "symfony/dependency-injection": "^3.4 || ^4.0"
+    },
     "require-dev": {
         "phpunit/phpunit": "^6.5"
     },
