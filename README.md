@@ -4,6 +4,8 @@
 
 Tools for testing Symfony Bundles.
 
+**This is work in progress**.
+
 ## Introduction
 
 Symfony made it easy to test bundles with a Kernel booted thanks to the `KernelTestCase` and the `MicrokernelTrait`.
