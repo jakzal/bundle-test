@@ -49,6 +49,43 @@ class FooBundleTest extends TestCase
 }
 ```
 
+### ConfigurableKernel
+
+The `Zalas\BundleTest\PHPUnit\ConfigurableKernel` trait provides a convenient way to configure and then boot the
+Symfony kernel in tests.
+
+Here's a full example of available methods:
+
+```php
+namespace Zalas\BundleTest\Tests\PHPUnit;
+
+use PHPUnit\Framework\TestCase;
+use Zalas\BundleTest\PHPUnit\ConfigurableKernel;
+
+class ConfigurableKernelTest extends TestCase
+{
+    use ConfigurableKernel;
+
+    public function testItEnablesTheFooService()
+    {
+        $this->givenEnvironment('foo')
+            ->givenDebugIsEnabled()
+            ->givenBundleIsEnabled([new FooBundle()])
+            ->givenBundleConfiguration('foo', ['enabled' => true, 'bar' => 'baz'])
+            ->givenPublicServiceId('foo')
+            ->givenKernel(CustomKernel::class)
+            ->givenTempDir('/tmp');
+
+        $kernel = self::bootKernel();
+
+        $this->assertTrue($kernel->getContainer()->has('foo'));
+    }
+}
+```
+
+A new kernel configuration is generated for each set of given* calls. If another test case uses the same
+given* calls the kernel cache will be reused. Otherwise a new one's generated.
+
 ## Behat
 
 ```php
