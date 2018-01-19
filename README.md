@@ -1,5 +1,7 @@
 # Bundle Test
 
+[![Build Status](https://travis-ci.org/jakzal/bundle-test.svg?branch=master)](https://travis-ci.org/jakzal/bundle-test)
+
 Tools for testing Symfony Bundles.
 
 ## Introduction
