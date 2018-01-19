@@ -40,7 +40,9 @@ class FooBundleTest extends TestCase
     {
         $this->givenBundlesAreEnabled([new FrameworkBundle(), new FooBundle()]);
 
-        $this->assertServiceIsNotDefined('foo');
+        $kernel = self::bootKernel();
+
+        $this->assertServiceIsNotDefined('foo', $kernel->getContainer());
     }
 
     public function testTheFooServiceIsEnabledInConfiguration()
@@ -48,7 +50,9 @@ class FooBundleTest extends TestCase
         $this->givenBundlesAreEnabled([new FrameworkBundle(), new FooBundle()]);
         $this->givenBundleConfiguration('foo', ['enabled' => true]);
 
-        $this->assertServiceIsDefined('foo');
+        $kernel = self::bootKernel();
+
+        $this->assertServiceIsDefined('foo', Foo::class, $kernel->getContainer());
     }
 }
 ```
