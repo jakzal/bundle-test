@@ -57,12 +57,12 @@ Symfony kernel in tests.
 Here's a full example of available methods:
 
 ```php
-namespace Zalas\BundleTest\Tests\PHPUnit;
+namespace Acme\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Zalas\BundleTest\PHPUnit\ConfigurableKernel;
 
-class ConfigurableKernelTest extends TestCase
+class FooTest extends TestCase
 {
     use ConfigurableKernel;
 
