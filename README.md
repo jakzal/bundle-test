@@ -42,7 +42,7 @@ class FooBundleTest extends TestCase
     public function testTheFooServiceIsEnabledInConfiguration()
     {
         $this->givenBundlesAreEnabled([new FrameworkBundle(), new FooBundle()]);
-        $this->givenBundleIsConfigured('foo', ['enabled' => true]);
+        $this->givenBundleConfiguration('foo', ['enabled' => true]);
 
         $this->assertServiceIsDefined('foo');
     }
