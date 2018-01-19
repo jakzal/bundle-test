@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Zalas\BundleTest\HttpKernel\KernelConfiguration;
 use Zalas\BundleTest\HttpKernel\TestKernel;
+use Zalas\BundleTest\Tests\HttpKernel\Fixtures\FooBundle\Foo;
 use Zalas\BundleTest\Tests\HttpKernel\Fixtures\FooBundle\FooBundle;
 
 class TestKernelTest extends TestCase
@@ -63,11 +64,11 @@ class TestKernelTest extends TestCase
             (new KernelConfiguration('ZalasTestKernelTest'))
                 ->withBundle(new FooBundle())
                 ->withBundleConfiguration('foo', ['enabled' => true])
-                ->withPublicServiceId('foo.foo')
+                ->withPublicServiceId(Foo::class)
         );
         $kernel->boot();
 
-        $this->assertTrue($kernel->getContainer()->has('foo.foo'));
+        $this->assertTrue($kernel->getContainer()->has(Foo::class));
     }
 
     public function test_services_remain_private_unless_configured()
@@ -79,6 +80,19 @@ class TestKernelTest extends TestCase
         );
         $kernel->boot();
 
-        $this->assertFalse($kernel->getContainer()->has('foo.foo'));
+        $this->assertFalse($kernel->getContainer()->has(Foo::class));
+    }
+
+    public function test_service_aliases_are_also_made_public()
+    {
+        $kernel = new TestKernel(
+            (new KernelConfiguration('ZalasTestKernelTest'))
+                ->withBundle(new FooBundle())
+                ->withBundleConfiguration('foo', ['enabled' => true])
+                ->withPublicServiceId('foo.foo')
+        );
+        $kernel->boot();
+
+        $this->assertTrue($kernel->getContainer()->has('foo.foo'));
     }
 }

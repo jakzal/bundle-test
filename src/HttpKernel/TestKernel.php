@@ -73,7 +73,12 @@ class TestKernel extends Kernel
                 public function process(ContainerBuilder $container)
                 {
                     foreach ($this->configuration->getPublicServiceIds() as $serviceId) {
-                        $container->getDefinition($serviceId)->setPublic(true);
+                        if ($container->hasDefinition($serviceId)) {
+                            $container->getDefinition($serviceId)->setPublic(true);
+                        }
+                        if ($container->hasAlias($serviceId)) {
+                            $container->getAlias($serviceId)->setPublic(true);
+                        }
                     }
                 }
             }
