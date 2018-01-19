@@ -163,4 +163,94 @@ class ConfigurableKernelTest extends TestCase
 
         $this->assertContains('ConfigurableKernelTest', $kernel->getCacheDir());
     }
+
+    public function test_environment_cannot_be_changed_once_kernel_is_booted()
+    {
+        $this->expectException(\LogicException::class);
+
+        self::bootKernel();
+
+        $this->givenEnvironment('foo');
+    }
+
+    public function test_debug_cannot_be_disabled_once_kernel_is_booted()
+    {
+        $this->expectException(\LogicException::class);
+
+        self::bootKernel();
+
+        $this->givenDebugIsDisabled();
+    }
+
+    public function test_debug_cannot_be_enabled_once_kernel_is_booted()
+    {
+        $this->expectException(\LogicException::class);
+
+        self::bootKernel();
+
+        $this->givenDebugIsEnabled();
+    }
+
+    public function test_kernel_class_cannot_be_changed_once_kernel_is_booted()
+    {
+        $this->expectException(\LogicException::class);
+
+        self::bootKernel();
+
+        $this->givenKernel(CustomKernel::class);
+    }
+
+    public function test_bundle_configuration_cannot_be_changed_once_kernel_is_booted()
+    {
+        $this->expectException(\LogicException::class);
+
+        self::bootKernel();
+
+        $this->givenBundleConfiguration('foo', ['enabled' => true]);
+    }
+
+    public function test_public_service_cannot_be_added_once_kernel_is_booted()
+    {
+        $this->expectException(\LogicException::class);
+
+        self::bootKernel();
+
+        $this->givenPublicServiceId('foo');
+    }
+
+    public function test_public_services_cannot_be_added_once_kernel_is_booted()
+    {
+        $this->expectException(\LogicException::class);
+
+        self::bootKernel();
+
+        $this->givenPublicServiceIds(['foo']);
+    }
+
+    public function test_bundle_cannot_be_enabled_once_kernel_is_booted()
+    {
+        $this->expectException(\LogicException::class);
+
+        self::bootKernel();
+
+        $this->givenBundleIsEnabled(new FooBundle());
+    }
+
+    public function test_bundles_cannot_be_enabled_once_kernel_is_booted()
+    {
+        $this->expectException(\LogicException::class);
+
+        self::bootKernel();
+
+        $this->givenBundlesAreEnabled([new FooBundle()]);
+    }
+
+    public function test_temp_dir_cannot_be_changed_once_kernel_is_booted()
+    {
+        $this->expectException(\LogicException::class);
+
+        self::bootKernel();
+
+        $this->givenTempDir('/tmp');
+    }
 }

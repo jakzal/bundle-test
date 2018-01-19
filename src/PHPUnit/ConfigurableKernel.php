@@ -43,6 +43,8 @@ trait ConfigurableKernel
 
     protected function givenEnvironment(string $environment): self
     {
+        $this->ensureKernelNotBooted();
+
         static::$kernelConfiguration = static::$kernelConfiguration->withEnvironment($environment);
 
         return $this;
@@ -50,6 +52,8 @@ trait ConfigurableKernel
 
     protected function givenDebugIsEnabled(): self
     {
+        $this->ensureKernelNotBooted();
+
         static::$kernelConfiguration = static::$kernelConfiguration->withDebug(true);
 
         return $this;
@@ -57,6 +61,8 @@ trait ConfigurableKernel
 
     protected function givenDebugIsDisabled(): self
     {
+        $this->ensureKernelNotBooted();
+
         static::$kernelConfiguration = static::$kernelConfiguration->withDebug(false);
 
         return $this;
@@ -64,6 +70,8 @@ trait ConfigurableKernel
 
     protected function givenKernel(string $kernelClass): self
     {
+        $this->ensureKernelNotBooted();
+
         static::$kernelClass = $kernelClass;
 
         return $this;
@@ -71,6 +79,8 @@ trait ConfigurableKernel
 
     protected function givenBundleConfiguration($extensionName, array $configuration): self
     {
+        $this->ensureKernelNotBooted();
+
         static::$kernelConfiguration = static::$kernelConfiguration->withBundleConfiguration($extensionName, $configuration);
 
         return $this;
@@ -78,6 +88,8 @@ trait ConfigurableKernel
 
     protected function givenPublicServiceId(string $serviceId): self
     {
+        $this->ensureKernelNotBooted();
+
         static::$kernelConfiguration = static::$kernelConfiguration->withPublicServiceId($serviceId);
 
         return $this;
@@ -85,6 +97,8 @@ trait ConfigurableKernel
 
     protected function givenPublicServiceIds(array $serviceIds): self
     {
+        $this->ensureKernelNotBooted();
+
         static::$kernelConfiguration = static::$kernelConfiguration->withPublicServiceIds($serviceIds);
 
         return $this;
@@ -95,6 +109,8 @@ trait ConfigurableKernel
      */
     protected function givenBundlesAreEnabled(array $bundles): self
     {
+        $this->ensureKernelNotBooted();
+
         static::$kernelConfiguration = static::$kernelConfiguration->withBundles($bundles);
 
         return $this;
@@ -102,6 +118,8 @@ trait ConfigurableKernel
 
     protected function givenBundleIsEnabled(BundleInterface $bundle): self
     {
+        $this->ensureKernelNotBooted();
+
         static::$kernelConfiguration = static::$kernelConfiguration->withBundle($bundle);
 
         return $this;
@@ -109,6 +127,8 @@ trait ConfigurableKernel
 
     protected function givenTempDir(string $tempDir): self
     {
+        $this->ensureKernelNotBooted();
+
         static::$kernelConfiguration = static::$kernelConfiguration->withTempDir($tempDir);
 
         return $this;
@@ -127,5 +147,12 @@ trait ConfigurableKernel
     protected static function getKernelClass(): string
     {
         return static::$kernelClass ?? static::getDefaultKernelClass();
+    }
+
+    private function ensureKernelNotBooted(): void
+    {
+        if (null !== static::$kernel) {
+            throw new \LogicException('Configuration cannot be changed once kernel is booted.');
+        }
     }
 }

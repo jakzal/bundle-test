@@ -21,6 +21,14 @@ trait TestKernel
      */
     protected static $kernel;
 
+    /**
+     * @before
+     */
+    protected function resetKernel()
+    {
+        static::$kernel = null;
+    }
+
     protected static function getKernelClass(): string
     {
         return $_ENV['KERNEL_CLASS'] ?? $_SERVER['KERNEL_CLASS'] ?? TheTestKernel::class;
