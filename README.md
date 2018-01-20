@@ -116,7 +116,7 @@ class FooContext implements Context
      */
     public function givenTheBundleIsEnabled(string $bundle)
     {
-        $class = 'Foo\'.$bundle;
+        $class = 'Foo\\'.$bundle;
         if (!class_exists($class)) {
             throw new \LogicException(sprintf('The bundle "%s" does not exist.', $class));
         }
