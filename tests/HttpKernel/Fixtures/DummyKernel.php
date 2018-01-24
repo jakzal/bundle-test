@@ -1,6 +1,6 @@
 <?php
 
-namespace Zalas\BundleTest\Tests\PHPUnit\Fixtures;
+namespace Zalas\BundleTest\Tests\HttpKernel\Fixtures;
 
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel;

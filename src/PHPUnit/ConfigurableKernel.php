@@ -4,33 +4,52 @@ declare(strict_types=1);
 namespace Zalas\BundleTest\PHPUnit;
 
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
-use Zalas\BundleTest\HttpKernel\KernelConfiguration;
+use Zalas\BundleTest\HttpKernel\KernelBuilder;
 
 /**
  * Builds on top of `TestKernel` trait to provide more convenient ways of setting up the kernel with given* methods.
  */
 trait ConfigurableKernel
 {
-    use TestKernel {
-        getKernelClass as private getDefaultKernelClass;
-    }
+    use TestKernel;
 
     /**
-     * @var KernelConfiguration|null
+     * @var KernelBuilder
      */
-    protected static $kernelConfiguration;
-
-    /**
-     * @var string
-     */
-    protected static $kernelClass;
+    protected static $kernelBuilder;
 
     /**
      * @before
      */
-    protected function initializeKernelConfiguration(): void
+    protected function initializeKernelBuilder(): void
     {
-        static::$kernelConfiguration = new KernelConfiguration($this->getTestNamespace());
+        static::$kernelBuilder = new KernelBuilder($this->getTestNamespace());
+        static::$kernelBuilder->withKernelClass(static::getKernelClass());
+
+        if (null !== $environment = $_ENV['APP_ENV'] ?? $_SERVER['APP_ENV'] ?? null) {
+            static::$kernelBuilder->withEnvironment((string) $environment);
+        }
+
+        if (null !== $debug = $_ENV['APP_DEBUG'] ?? $_SERVER['APP_DEBUG'] ?? null) {
+            static::$kernelBuilder->withDebug((bool) $debug);
+        }
+    }
+
+    protected static function createKernelBuilder(array $options): KernelBuilder
+    {
+        if (null !== $environment = $options['environment'] ?? null) {
+            static::$kernelBuilder->withEnvironment((string) $environment);
+        }
+
+        if (null !== $isDebug = $options['debug'] ?? null) {
+            static::$kernelBuilder->withDebug((bool) $isDebug);
+        }
+
+        if (null !== $kernelClass = $options['kernel_class'] ?? null) {
+            static::$kernelBuilder->withKernelClass((string) $kernelClass);
+        }
+
+        return static::$kernelBuilder;
     }
 
     /**
@@ -45,7 +64,7 @@ trait ConfigurableKernel
     {
         $this->ensureKernelNotBooted();
 
-        static::$kernelConfiguration = static::$kernelConfiguration->withEnvironment($environment);
+        static::$kernelBuilder->withEnvironment($environment);
 
         return $this;
     }
@@ -54,7 +73,7 @@ trait ConfigurableKernel
     {
         $this->ensureKernelNotBooted();
 
-        static::$kernelConfiguration = static::$kernelConfiguration->withDebug(true);
+        static::$kernelBuilder->withDebug(true);
 
         return $this;
     }
@@ -63,7 +82,7 @@ trait ConfigurableKernel
     {
         $this->ensureKernelNotBooted();
 
-        static::$kernelConfiguration = static::$kernelConfiguration->withDebug(false);
+        static::$kernelBuilder->withDebug(false);
 
         return $this;
     }
@@ -72,7 +91,7 @@ trait ConfigurableKernel
     {
         $this->ensureKernelNotBooted();
 
-        static::$kernelClass = $kernelClass;
+        static::$kernelBuilder->withKernelClass($kernelClass);
 
         return $this;
     }
@@ -81,7 +100,7 @@ trait ConfigurableKernel
     {
         $this->ensureKernelNotBooted();
 
-        static::$kernelConfiguration = static::$kernelConfiguration->withBundleConfiguration($extensionName, $configuration);
+        static::$kernelBuilder->withBundleConfiguration($extensionName, $configuration);
 
         return $this;
     }
@@ -90,7 +109,7 @@ trait ConfigurableKernel
     {
         $this->ensureKernelNotBooted();
 
-        static::$kernelConfiguration = static::$kernelConfiguration->withPublicServiceId($serviceId);
+        static::$kernelBuilder->withPublicService($serviceId);
 
         return $this;
     }
@@ -99,7 +118,7 @@ trait ConfigurableKernel
     {
         $this->ensureKernelNotBooted();
 
-        static::$kernelConfiguration = static::$kernelConfiguration->withPublicServiceIds($serviceIds);
+        static::$kernelBuilder->withPublicServices($serviceIds);
 
         return $this;
     }
@@ -111,7 +130,7 @@ trait ConfigurableKernel
     {
         $this->ensureKernelNotBooted();
 
-        static::$kernelConfiguration = static::$kernelConfiguration->withBundles($bundles);
+        static::$kernelBuilder->withBundles($bundles);
 
         return $this;
     }
@@ -120,7 +139,7 @@ trait ConfigurableKernel
     {
         $this->ensureKernelNotBooted();
 
-        static::$kernelConfiguration = static::$kernelConfiguration->withBundle($bundle);
+        static::$kernelBuilder->withBundle($bundle);
 
         return $this;
     }
@@ -129,24 +148,9 @@ trait ConfigurableKernel
     {
         $this->ensureKernelNotBooted();
 
-        static::$kernelConfiguration = static::$kernelConfiguration->withTempDir($tempDir);
+        static::$kernelBuilder->withTempDir($tempDir);
 
         return $this;
-    }
-
-    protected static function createKernelConfiguration(array $options): KernelConfiguration
-    {
-        $environment = $options['environment'] ?? $_ENV['APP_ENV'] ?? $_SERVER['APP_ENV'] ?? static::$kernelConfiguration->getEnvironment();
-        $isDebug = (bool)($options['debug'] ?? $_ENV['APP_DEBUG'] ?? $_SERVER['APP_DEBUG'] ?? static::$kernelConfiguration->isDebug());
-
-        return static::$kernelConfiguration = static::$kernelConfiguration
-            ->withEnvironment($environment)
-            ->withDebug($isDebug);
-    }
-
-    protected static function getKernelClass(): string
-    {
-        return static::$kernelClass ?? static::getDefaultKernelClass();
     }
 
     private function ensureKernelNotBooted(): void

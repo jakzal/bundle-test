@@ -5,7 +5,10 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="foo.foo" class="Zalas\BundleTest\Tests\PHPUnit\Fixtures\FooBundle\Foo" public="false"/>
+        <defaults public="false"/>
+
+        <service id="Zalas\BundleTest\Tests\PHPUnit\Fixtures\FooBundle\Foo"/>
+        <service id="foo.foo" alias="Zalas\BundleTest\Tests\PHPUnit\Fixtures\FooBundle\Foo"/>
     </services>
 
 </container>

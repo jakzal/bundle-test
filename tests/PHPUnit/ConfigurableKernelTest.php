@@ -4,13 +4,23 @@ declare(strict_types=1);
 namespace Zalas\BundleTest\Tests\PHPUnit;
 
 use PHPUnit\Framework\TestCase;
+use Zalas\BundleTest\HttpKernel\TestKernel;
 use Zalas\BundleTest\PHPUnit\ConfigurableKernel;
 use Zalas\BundleTest\Tests\PHPUnit\Fixtures\CustomKernel;
+use Zalas\BundleTest\Tests\PHPUnit\Fixtures\FooBundle\Foo;
 use Zalas\BundleTest\Tests\PHPUnit\Fixtures\FooBundle\FooBundle;
 
 class ConfigurableKernelTest extends TestCase
 {
     use ConfigurableKernel;
+    use GlobalsAnnotations;
+
+    public function test_it_boots_the_test_kernel_by_default()
+    {
+        $kernel = self::bootKernel();
+
+        $this->assertInstanceOf(TestKernel::class, $kernel);
+    }
 
     public function test_it_configures_the_kernel_environment()
     {
@@ -39,7 +49,7 @@ class ConfigurableKernelTest extends TestCase
         $this->assertFalse($kernel->isDebug());
     }
 
-    public function test_it_confgiures_the_kernel_class()
+    public function test_it_configures_the_kernel_class()
     {
         $this->givenKernel(CustomKernel::class);
 
@@ -66,40 +76,70 @@ class ConfigurableKernelTest extends TestCase
 
     /**
      * @backupGlobals enabled
+     * @env APP_ENV=bar
+     * @env APP_DEBUG=0
+     * @env KERNEL_CLASS=Zalas\BundleTest\Tests\PHPUnit\Fixtures\CustomKernel
      */
-    public function test_environment_variables_take_precedence_over_options_previously_configured()
+    public function test_environment_variables_are_read_if_kernel_was_not_configured_explicitly()
     {
-        $this->givenEnvironment('foo');
-        $this->givenDebugIsDisabled();
-
-        $_ENV['APP_ENV'] = 'bar';
-        $_ENV['APP_DEBUG'] = '1';
-        $_ENV['KERNEL_CLASS'] = CustomKernel::class;
-
         $kernel = self::bootKernel();
 
         $this->assertInstanceOf(CustomKernel::class, $kernel);
         $this->assertSame('bar', $kernel->getEnvironment());
-        $this->assertTrue($kernel->isDebug());
+        $this->assertFalse($kernel->isDebug());
     }
 
     /**
      * @backupGlobals enabled
+     * @server APP_ENV=bar
+     * @server APP_DEBUG=0
+     * @server KERNEL_CLASS=Zalas\BundleTest\Tests\PHPUnit\Fixtures\CustomKernel
      */
-    public function test_server_variables_take_precedence_over_options_previously_configured()
+    public function test_server_variables_are_read_if_kernel_was_not_configured_explicitly()
     {
-        $this->givenEnvironment('foo');
-        $this->givenDebugIsDisabled();
-
-        $_SERVER['APP_ENV'] = 'bar';
-        $_SERVER['APP_DEBUG'] = '1';
-        $_SERVER['KERNEL_CLASS'] = CustomKernel::class;
-
         $kernel = self::bootKernel();
 
         $this->assertInstanceOf(CustomKernel::class, $kernel);
         $this->assertSame('bar', $kernel->getEnvironment());
-        $this->assertTrue($kernel->isDebug());
+        $this->assertFalse($kernel->isDebug());
+    }
+
+    /**
+     * @backupGlobals enabled
+     * @env APP_ENV=bar
+     * @env APP_DEBUG=1
+     * @env KERNEL_CLASS=Zalas\BundleTest\HttpKernel\TestKernel
+     */
+    public function test_environment_variables_are_overridden_by_custom_configuration()
+    {
+        $this->givenEnvironment('foo');
+        $this->givenDebugIsDisabled();
+        $this->givenKernel(CustomKernel::class);
+
+        $kernel = self::bootKernel();
+
+        $this->assertInstanceOf(CustomKernel::class, $kernel);
+        $this->assertSame('foo', $kernel->getEnvironment());
+        $this->assertFalse($kernel->isDebug());
+    }
+
+    /**
+     * @backupGlobals enabled
+     * @server APP_ENV=bar
+     * @server APP_DEBUG=1
+     * @server KERNEL_CLASS=Zalas\BundleTest\HttpKernel\TestKernel
+     */
+    public function test_server_variables_are_overridden_by_custom_configuration()
+    {
+        $this->givenEnvironment('foo');
+        $this->givenDebugIsDisabled();
+        $this->givenKernel(CustomKernel::class);
+
+        $kernel = self::bootKernel();
+
+        $this->assertInstanceOf(CustomKernel::class, $kernel);
+        $this->assertSame('foo', $kernel->getEnvironment());
+        $this->assertFalse($kernel->isDebug());
     }
 
     public function test_it_enables_bundles()
@@ -130,22 +170,22 @@ class ConfigurableKernelTest extends TestCase
     {
         $this->givenBundleIsEnabled(new FooBundle());
         $this->givenBundleConfiguration('foo', ['enabled' => true]);
-        $this->givenPublicServiceId('foo.foo');
+        $this->givenPublicServiceId(Foo::class);
 
         $kernel = self::bootKernel();
 
-        $this->assertTrue($kernel->getContainer()->has('foo.foo'));
+        $this->assertTrue($kernel->getContainer()->has(Foo::class));
     }
 
     public function test_it_exposes_private_services_as_public()
     {
         $this->givenBundleIsEnabled(new FooBundle());
         $this->givenBundleConfiguration('foo', ['enabled' => true]);
-        $this->givenPublicServiceIds(['foo.foo']);
+        $this->givenPublicServiceIds([Foo::class]);
 
         $kernel = self::bootKernel();
 
-        $this->assertTrue($kernel->getContainer()->has('foo.foo'));
+        $this->assertTrue($kernel->getContainer()->has(Foo::class));
     }
 
     public function test_it_changes_the_temp_dir()

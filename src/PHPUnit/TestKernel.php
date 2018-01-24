@@ -5,7 +5,7 @@ namespace Zalas\BundleTest\PHPUnit;
 
 use Symfony\Component\DependencyInjection\ResettableContainerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Zalas\BundleTest\HttpKernel\KernelConfiguration;
+use Zalas\BundleTest\HttpKernel\KernelBuilder;
 use Zalas\BundleTest\HttpKernel\TestKernel as TheTestKernel;
 
 /**
@@ -38,10 +38,7 @@ trait TestKernel
     {
         self::ensureKernelShutdown();
 
-        static::$kernel = static::createKernel($options);
-        static::$kernel->boot();
-
-        return static::$kernel;
+        return static::$kernel = static::createKernelBuilder($options)->bootKernel();
     }
 
     /**
@@ -58,28 +55,17 @@ trait TestKernel
      */
     protected static function createKernel(array $options = []): KernelInterface
     {
-        $kernelClass = $options['kernel_class'] ?? static::getKernelClass($options);
-
-        if (!class_exists($kernelClass)) {
-            throw new \RuntimeException(sprintf('Class `%s` does not exist or cannot be autoloaded.', $kernelClass));
-        }
-
-        if (TheTestKernel::class !== $kernelClass && !in_array(TheTestKernel::class, class_parents($kernelClass))) {
-            throw new \LogicException(sprintf('Only the `%s` kernel implementations are supported, but `%s` was given.', TheTestKernel::class, $kernelClass));
-        }
-
-        return new $kernelClass(self::createKernelConfiguration($options));
+        return self::createKernelBuilder($options)->createKernel();
     }
 
-    protected static function createKernelConfiguration(array $options): KernelConfiguration
+    protected static function createKernelBuilder(array $options): KernelBuilder
     {
-        return (new KernelConfiguration())
-            ->withEnvironment(
-                $options['environment'] ?? $_ENV['APP_ENV'] ?? $_SERVER['APP_ENV'] ?? 'test'
-            )
-            ->withDebug(
-                (bool)($options['debug'] ?? $_ENV['APP_DEBUG'] ?? $_SERVER['APP_DEBUG'] ?? true)
-            );
+        $builder = new KernelBuilder();
+        $builder->withKernelClass($options['kernel_class'] ?? static::getKernelClass());
+        $builder->withEnvironment($options['environment'] ?? $_ENV['APP_ENV'] ?? $_SERVER['APP_ENV'] ?? 'test');
+        $builder->withDebug((bool) ($options['debug'] ?? $_ENV['APP_DEBUG'] ?? $_SERVER['APP_DEBUG'] ?? true));
+
+        return $builder;
     }
 
     /**

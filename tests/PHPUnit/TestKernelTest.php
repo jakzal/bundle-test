@@ -6,11 +6,11 @@ namespace Zalas\BundleTest\Tests\PHPUnit;
 use PHPUnit\Framework\TestCase;
 use Zalas\BundleTest\PHPUnit\TestKernel;
 use Zalas\BundleTest\Tests\PHPUnit\Fixtures\CustomKernel;
-use Zalas\BundleTest\Tests\PHPUnit\Fixtures\DummyKernel;
 
 class TestKernelTest extends TestCase
 {
     use TestKernel;
+    use GlobalsAnnotations;
 
     public function test_bootKernel_creates_the_test_kernel_with_defaults()
     {
@@ -98,13 +98,12 @@ class TestKernelTest extends TestCase
 
     /**
      * @backupGlobals enabled
+     * @env APP_ENV=foo
+     * @env APP_DEBUG=0
+     * @env KERNEL_CLASS=Zalas\BundleTest\Tests\PHPUnit\Fixtures\CustomKernel
      */
     public function test_createKernel_creates_the_kernel_based_on_environment_variables()
     {
-        $_ENV['APP_ENV'] = 'foo';
-        $_ENV['APP_DEBUG'] = '0';
-        $_ENV['KERNEL_CLASS'] = CustomKernel::class;
-
         $kernel = self::createKernel();
 
         $this->assertInstanceOf(CustomKernel::class, $kernel);
@@ -114,31 +113,16 @@ class TestKernelTest extends TestCase
 
     /**
      * @backupGlobals enabled
+     * @server APP_ENV=foo
+     * @server APP_DEBUG=0
+     * @server KERNEL_CLASS=Zalas\BundleTest\Tests\PHPUnit\Fixtures\CustomKernel
      */
     public function test_createKernel_creates_the_kernel_based_on_server_variables()
     {
-        $_SERVER['APP_ENV'] = 'foo';
-        $_SERVER['APP_DEBUG'] = '0';
-        $_SERVER['KERNEL_CLASS'] = CustomKernel::class;
-
         $kernel = self::createKernel();
 
         $this->assertInstanceOf(CustomKernel::class, $kernel);
         $this->assertSame('foo', $kernel->getEnvironment());
         $this->assertFalse($kernel->isDebug());
-    }
-
-    public function test_createKernel_throws_a_logic_exception_if_the_kernel_is_not_a_test_kernel()
-    {
-        $this->expectException(\LogicException::class);
-
-        self::createKernel(['kernel_class' => DummyKernel::class]);
-    }
-
-    public function test_createKernel_throws_a_runtime_exception_if_the_kernel_does_not_exist()
-    {
-        $this->expectException(\RuntimeException::class);
-
-        self::createKernel(['kernel_class' => 'Foo\\Bar\\Baz']);
     }
 }
