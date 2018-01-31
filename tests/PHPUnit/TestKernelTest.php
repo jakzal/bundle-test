@@ -10,7 +10,6 @@ use Zalas\BundleTest\Tests\PHPUnit\Fixtures\CustomKernel;
 class TestKernelTest extends TestCase
 {
     use TestKernel;
-    use GlobalsAnnotations;
 
     public function test_bootKernel_creates_the_test_kernel_with_defaults()
     {
@@ -97,7 +96,6 @@ class TestKernelTest extends TestCase
     }
 
     /**
-     * @backupGlobals enabled
      * @env APP_ENV=foo
      * @env APP_DEBUG=0
      * @env KERNEL_CLASS=Zalas\BundleTest\Tests\PHPUnit\Fixtures\CustomKernel
@@ -112,7 +110,6 @@ class TestKernelTest extends TestCase
     }
 
     /**
-     * @backupGlobals enabled
      * @server APP_ENV=foo
      * @server APP_DEBUG=0
      * @server KERNEL_CLASS=Zalas\BundleTest\Tests\PHPUnit\Fixtures\CustomKernel

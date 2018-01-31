@@ -13,7 +13,6 @@ use Zalas\BundleTest\Tests\PHPUnit\Fixtures\FooBundle\FooBundle;
 class ConfigurableKernelTest extends TestCase
 {
     use ConfigurableKernel;
-    use GlobalsAnnotations;
 
     public function test_it_boots_the_test_kernel_by_default()
     {
@@ -75,7 +74,6 @@ class ConfigurableKernelTest extends TestCase
     }
 
     /**
-     * @backupGlobals enabled
      * @env APP_ENV=bar
      * @env APP_DEBUG=0
      * @env KERNEL_CLASS=Zalas\BundleTest\Tests\PHPUnit\Fixtures\CustomKernel
@@ -90,7 +88,6 @@ class ConfigurableKernelTest extends TestCase
     }
 
     /**
-     * @backupGlobals enabled
      * @server APP_ENV=bar
      * @server APP_DEBUG=0
      * @server KERNEL_CLASS=Zalas\BundleTest\Tests\PHPUnit\Fixtures\CustomKernel
@@ -105,7 +102,6 @@ class ConfigurableKernelTest extends TestCase
     }
 
     /**
-     * @backupGlobals enabled
      * @env APP_ENV=bar
      * @env APP_DEBUG=1
      * @env KERNEL_CLASS=Zalas\BundleTest\HttpKernel\TestKernel
@@ -124,7 +120,6 @@ class ConfigurableKernelTest extends TestCase
     }
 
     /**
-     * @backupGlobals enabled
      * @server APP_ENV=bar
      * @server APP_DEBUG=1
      * @server KERNEL_CLASS=Zalas\BundleTest\HttpKernel\TestKernel

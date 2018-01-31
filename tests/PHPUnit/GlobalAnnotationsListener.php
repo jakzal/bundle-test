@@ -3,24 +3,62 @@ declare(strict_types=1);
 
 namespace Zalas\BundleTest\Tests\PHPUnit;
 
+use PHPUnit\Framework\Test;
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestListener;
+use PHPUnit\Framework\TestListenerDefaultImplementation;
+
 /**
  * Enables @env and @server annotations on test classes and methods.
  *
- * Examples (with "@" omitted so they're not parsed by PHPUnit):
+ * Examples:
  *
  * <code>
- * env APP_ENV=bar
- * server APP_DEBUG=1
- * server FOO=
+ * @env APP_ENV=bar
+ * @server APP_DEBUG=1
+ * @server FOO=
  * </code>
  */
-trait GlobalsAnnotations
+final class GlobalAnnotationsListener implements TestListener
 {
-    protected function checkRequirements()
-    {
-        parent::checkRequirements();
+    use TestListenerDefaultImplementation;
 
-        $globalVars = $this->getGlobalVariableAnnotations();
+    private $server;
+    private $env;
+
+    public function startTest(Test $test)
+    {
+        if ($test instanceof TestCase) {
+            $this->backupGlobals();
+            $this->readGlobalAnnotations($test);
+        }
+    }
+
+    public function endTest(Test $test, $time)
+    {
+        $this->restoreGlobals();
+    }
+
+    private function backupGlobals(): void
+    {
+        $this->server = $_SERVER;
+        $this->env = $_ENV;
+    }
+
+    private function restoreGlobals(): void
+    {
+        if (null !== $this->server) {
+            $_SERVER = $this->server;
+        }
+
+        if (null !== $this->env) {
+            $_ENV = $this->env;
+        }
+    }
+
+    private function readGlobalAnnotations(TestCase $test): void
+    {
+        $globalVars = $this->parseGlobalAnnotations($test);
 
         if (!empty($globalVars['env'])) {
             foreach ($globalVars['env'] as $name => $value) {
@@ -34,9 +72,9 @@ trait GlobalsAnnotations
         }
     }
 
-    private function getGlobalVariableAnnotations(): array
+    private function parseGlobalAnnotations(TestCase $test): array
     {
-        $annotations = $this->getAnnotations();
+        $annotations = $test->getAnnotations();
 
         $globalVarAnnotations = array_filter(
             array_merge_recursive($annotations['class'], $annotations['method']),
