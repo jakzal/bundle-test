@@ -9,7 +9,7 @@ use Zalas\BundleTest\HttpKernel\KernelBuilder;
 use Zalas\BundleTest\HttpKernel\TestKernel as TheTestKernel;
 
 /**
- * Reproduces the behaviour of `Symfony\Bundle\FrameworkBundle\Test\WebTestCase` for the `TestKernel`.
+ * Reproduces the behaviour of `Symfony\Bundle\FrameworkBundle\Test\KernelTestCase` for the `TestKernel`.
  *
  * Compared to its inspiration this trait offers a more dynamic way of booting the Symfony kernel.
  * Cache will be generated for each variation of the kernel configuration.
@@ -44,7 +44,7 @@ trait TestKernel
     /**
      * Creates a test kernel.
      *
-     * Compared to the original `WebTestCase` this method offers an additional `kernel_class` option due to a more
+     * Compared to the original `KernelTestCase` this method offers an additional `kernel_class` option due to a more
      * dynamic nature of this trait.
      *
      * Options:
