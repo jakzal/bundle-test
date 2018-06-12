@@ -3,7 +3,6 @@
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/7.0/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          forceCoversAnnotation="false"
-         beStrictAboutCoversAnnotation="true"
          beStrictAboutOutputDuringTests="true"
          beStrictAboutTodoAnnotatedTests="true"
          verbose="true"
@@ -21,4 +20,9 @@
             <directory suffix=".php">src</directory>
         </whitelist>
     </filter>
+
+    <logging>
+        <log type="coverage-html" target="build/coverage" lowUpperBound="50" highLowerBound="95"/>
+        <log type="coverage-clover" target="build/coverage.xml"/>
+    </logging>
 </phpunit>

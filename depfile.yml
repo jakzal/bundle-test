@@ -1,0 +1,57 @@
+paths:
+  - ./src
+exclude_files: ~
+layers:
+  - name: HttpKernel
+    collectors:
+      - type: className
+        regex: ^Zalas\\BundleTest\\HttpKernel\\.*
+  - name: PHPUnit
+    collectors:
+      - type: className
+        regex: ^Zalas\\BundleTest\\PHPUnit\\.*
+  - name: Symfony Config
+    collectors:
+      - type: className
+        regex: ^Symfony\\Component\\Config\\.*
+  - name: Symfony DependencyInjection
+    collectors:
+      - type: className
+        regex: ^Symfony\\Component\\DependencyInjection\\.*
+  - name: Symfony HttpKernel
+    collectors:
+      - type: className
+        regex: ^Symfony\\Component\\HttpKernel\\.*
+  - name: PHPUnit Framework
+    collectors:
+      - type: className
+        regex: ^PHPUnit\\Framework\\.*
+  - name: Other Vendors
+    collectors:
+      - type: bool
+        must:
+          # must be outside of global namespace
+          - type: className
+            regex: '[\\]+'
+        must_not:
+          # must not be one of the known vendors
+          - type: className
+            regex: ^Zalas\\BundleTest\\.*
+          - type: className
+            regex: ^PHPUnit\\Framework\\.*
+          - type: className
+            regex: ^Symfony\\Component\\Config\\.*
+          - type: className
+            regex: ^Symfony\\Component\\DependencyInjection\\.*
+          - type: className
+            regex: ^Symfony\\Component\\HttpKernel\\.*
+ruleset:
+  HttpKernel:
+    - Symfony Config
+    - Symfony DependencyInjection
+    - Symfony HttpKernel
+  PHPUnit:
+    - HttpKernel
+    - PHPUnit Framework
+    - Symfony DependencyInjection
+    - Symfony HttpKernel
