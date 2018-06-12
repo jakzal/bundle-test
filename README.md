@@ -1,6 +1,7 @@
 # Bundle Test
 
 [![Build Status](https://travis-ci.org/jakzal/bundle-test.svg?branch=master)](https://travis-ci.org/jakzal/bundle-test)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/jakzal/bundle-test/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/jakzal/bundle-test/?branch=master)
 
 Tools for testing Symfony Bundles.
 
