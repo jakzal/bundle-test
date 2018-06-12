@@ -126,7 +126,7 @@ trait ConfigurableKernel
     /**
      * @param BundleInterface[] $bundles
      */
-    protected function givenBundlesAreEnabled(array $bundles): self
+    protected function givenEnabledBundles(array $bundles): self
     {
         $this->ensureKernelNotBooted();
 
@@ -135,7 +135,7 @@ trait ConfigurableKernel
         return $this;
     }
 
-    protected function givenBundleIsEnabled(BundleInterface $bundle): self
+    protected function givenEnabledBundle(BundleInterface $bundle): self
     {
         $this->ensureKernelNotBooted();
 

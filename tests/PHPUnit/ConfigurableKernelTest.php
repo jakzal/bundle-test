@@ -139,7 +139,7 @@ class ConfigurableKernelTest extends TestCase
 
     public function test_it_enables_bundles()
     {
-        $this->givenBundlesAreEnabled([new FooBundle()]);
+        $this->givenEnabledBundles([new FooBundle()]);
 
         $kernel = self::bootKernel();
         $bundles = $kernel->getBundles();
@@ -151,7 +151,7 @@ class ConfigurableKernelTest extends TestCase
 
     public function test_it_enables_a_bundle()
     {
-        $this->givenBundleIsEnabled(new FooBundle());
+        $this->givenEnabledBundle(new FooBundle());
 
         $kernel = self::bootKernel();
         $bundles = $kernel->getBundles();
@@ -163,7 +163,7 @@ class ConfigurableKernelTest extends TestCase
 
     public function test_it_configures_the_bundle()
     {
-        $this->givenBundleIsEnabled(new FooBundle());
+        $this->givenEnabledBundle(new FooBundle());
         $this->givenBundleConfiguration('foo', ['enabled' => true]);
         $this->givenPublicServiceId(Foo::class);
 
@@ -174,7 +174,7 @@ class ConfigurableKernelTest extends TestCase
 
     public function test_it_exposes_private_services_as_public()
     {
-        $this->givenBundleIsEnabled(new FooBundle());
+        $this->givenEnabledBundle(new FooBundle());
         $this->givenBundleConfiguration('foo', ['enabled' => true]);
         $this->givenPublicServiceIds([Foo::class]);
 
@@ -268,7 +268,7 @@ class ConfigurableKernelTest extends TestCase
 
         self::bootKernel();
 
-        $this->givenBundleIsEnabled(new FooBundle());
+        $this->givenEnabledBundle(new FooBundle());
     }
 
     public function test_bundles_cannot_be_enabled_once_kernel_is_booted()
@@ -277,7 +277,7 @@ class ConfigurableKernelTest extends TestCase
 
         self::bootKernel();
 
-        $this->givenBundlesAreEnabled([new FooBundle()]);
+        $this->givenEnabledBundles([new FooBundle()]);
     }
 
     public function test_temp_dir_cannot_be_changed_once_kernel_is_booted()
