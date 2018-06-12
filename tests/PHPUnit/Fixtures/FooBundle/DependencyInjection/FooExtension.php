@@ -15,7 +15,7 @@ class FooExtension extends Extension
         $config = $this->processConfiguration(new Configuration(), $configs);
 
         if ($config['enabled']) {
-            $loader = new XmlFileLoader($container, new FileLocator(dirname(__DIR__).'/Resources/config'));
+            $loader = new XmlFileLoader($container, new FileLocator(\dirname(__DIR__).'/Resources/config'));
             $loader->load('services.xml');
         }
     }

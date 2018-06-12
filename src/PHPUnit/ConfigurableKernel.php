@@ -57,7 +57,7 @@ trait ConfigurableKernel
      */
     protected function getTestNamespace(): string
     {
-        return str_replace('\\', '', __CLASS__);
+        return \str_replace('\\', '', __CLASS__);
     }
 
     protected function givenEnvironment(string $environment): self

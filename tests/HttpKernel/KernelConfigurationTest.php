@@ -105,7 +105,7 @@ class KernelConfigurationTest extends TestCase
         $config = new KernelConfiguration();
         $newConfig = $config->withTempDir('/tmp');
 
-        $tempDir = sys_get_temp_dir().'/'.KernelConfiguration::DEFAULT_NAMESPACE.'/'.$config->getHash();
+        $tempDir = \sys_get_temp_dir().'/'.KernelConfiguration::DEFAULT_NAMESPACE.'/'.$config->getHash();
         $newTempDir = '/tmp/'.KernelConfiguration::DEFAULT_NAMESPACE.'/'.$newConfig->getHash();
 
         $this->assertSame($tempDir, $config->getTempDir());
@@ -122,7 +122,7 @@ class KernelConfigurationTest extends TestCase
     public function test_the_cache_dir_is_in_the_temp_dir()
     {
         $config = (new KernelConfiguration('Foo'))->withEnvironment('foo')->withTempDir('/tmp');
-        $cacheDir = sprintf('/tmp/Foo/%s/var/cache/foo', $config->getHash());
+        $cacheDir = \sprintf('/tmp/Foo/%s/var/cache/foo', $config->getHash());
 
         $this->assertSame($cacheDir, $config->getCacheDir());
     }
@@ -130,7 +130,7 @@ class KernelConfigurationTest extends TestCase
     public function test_the_log_dir_is_in_the_temp_dir()
     {
         $config = (new KernelConfiguration('Foo'))->withEnvironment('foo')->withTempDir('/tmp');
-        $logDir = sprintf('/tmp/Foo/%s/var/log', $config->getHash());
+        $logDir = \sprintf('/tmp/Foo/%s/var/log', $config->getHash());
 
         $this->assertSame($logDir, $config->getLogDir());
     }

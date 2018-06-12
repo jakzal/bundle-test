@@ -185,7 +185,7 @@ class ConfigurableKernelTest extends TestCase
 
     public function test_it_changes_the_temp_dir()
     {
-        $this->givenTempDir($tempDir = sys_get_temp_dir().'/ConfigurableKernelTest');
+        $this->givenTempDir($tempDir = \sys_get_temp_dir().'/ConfigurableKernelTest');
 
         $kernel = self::bootKernel();
 

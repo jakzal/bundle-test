@@ -79,7 +79,7 @@ class KernelConfiguration
      */
     public function withBundles(array $bundles): self
     {
-        return array_reduce($bundles, function (self $config, BundleInterface $bundle) {
+        return \array_reduce($bundles, function (self $config, BundleInterface $bundle) {
             return $config->withBundle($bundle);
         }, $this);
     }
@@ -87,7 +87,7 @@ class KernelConfiguration
     public function withBundleConfiguration(string $extensionName, array $configuration): self
     {
         $config = clone $this;
-        $config->bundleConfigurations[$extensionName] = array_merge_recursive(
+        $config->bundleConfigurations[$extensionName] = \array_merge_recursive(
             $config->bundleConfigurations[$extensionName] ?? [],
             $configuration
         );
@@ -116,7 +116,7 @@ class KernelConfiguration
      */
     public function withPublicServiceIds(array $serviceIds): self
     {
-        return array_reduce($serviceIds, function (self $config, string $serviceId) {
+        return \array_reduce($serviceIds, function (self $config, string $serviceId) {
             return $config->withPublicServiceId($serviceId);
         }, $this);
     }
@@ -128,11 +128,11 @@ class KernelConfiguration
      */
     public function getHash(): string
     {
-        return sha1(serialize([
+        return \sha1(\serialize([
             $this->getEnvironment(),
             $this->isDebug(),
-            array_map(function (BundleInterface $bundle) {
-                return get_class($bundle);
+            \array_map(function (BundleInterface $bundle) {
+                return \get_class($bundle);
             }, $this->getBundles()),
             $this->getAllBundleConfigurations(),
             $this->tempDir,
@@ -166,17 +166,17 @@ class KernelConfiguration
 
     public function getTempDir(): string
     {
-        return sprintf('%s/%s/%s', $this->tempDir ?? sys_get_temp_dir(), $this->namespace, $this->getHash());
+        return \sprintf('%s/%s/%s', $this->tempDir ?? \sys_get_temp_dir(), $this->namespace, $this->getHash());
     }
 
     final public function getCacheDir(): string
     {
-        return sprintf('%s/var/cache/%s', $this->getTempDir(), $this->environment);
+        return \sprintf('%s/var/cache/%s', $this->getTempDir(), $this->environment);
     }
 
     final public function getLogDir(): string
     {
-        return sprintf('%s/var/log', $this->getTempDir());
+        return \sprintf('%s/var/log', $this->getTempDir());
     }
 
     /**

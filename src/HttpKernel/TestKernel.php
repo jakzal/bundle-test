@@ -61,8 +61,7 @@ class TestKernel extends Kernel
     private function makeServicesPublic(ContainerBuilder $container)
     {
         $container->addCompilerPass(
-            new class($this->configuration) implements CompilerPassInterface
-            {
+            new class($this->configuration) implements CompilerPassInterface {
                 private $configuration;
 
                 public function __construct(KernelConfiguration $configuration)

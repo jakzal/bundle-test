@@ -16,13 +16,13 @@ class Configuration implements ConfigurationInterface
         // canBeEnabled() is broken in older Symfony versions
         $rootNode
             ->addDefaultsIfNotSet()
-            ->treatFalseLike(array('enabled' => false))
-            ->treatTrueLike(array('enabled' => true))
-            ->treatNullLike(array('enabled' => true))
+            ->treatFalseLike(['enabled' => false])
+            ->treatTrueLike(['enabled' => true])
+            ->treatNullLike(['enabled' => true])
             ->beforeNormalization()
                 ->ifArray()
                 ->then(function ($v) {
-                    $v['enabled'] = isset($v['enabled']) ? $v['enabled'] : !empty($v);
+                    $v['enabled'] = $v['enabled'] ?? !empty($v);
 
                     return $v;
                 })

@@ -9,6 +9,6 @@ final class KernelNotSupportedException extends \LogicException implements Excep
 {
     public function __construct(string $actualClass, string $supportedParent)
     {
-        parent::__construct(sprintf('Only the `%s` kernel implementations are supported, but `%s` was given.', $supportedParent, $actualClass));
+        parent::__construct(\sprintf('Only the `%s` kernel implementations are supported, but `%s` was given.', $supportedParent, $actualClass));
     }
 }

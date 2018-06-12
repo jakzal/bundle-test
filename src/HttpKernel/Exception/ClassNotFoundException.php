@@ -9,6 +9,6 @@ final class ClassNotFoundException extends \RuntimeException implements Exceptio
 {
     public function __construct(string $class)
     {
-        parent::__construct(sprintf('Class `%s` does not exist or cannot be autoloaded.', $class));
+        parent::__construct(\sprintf('Class `%s` does not exist or cannot be autoloaded.', $class));
     }
 }

@@ -105,11 +105,11 @@ final class KernelBuilder
 
     private function guardKernelClass(string $kernelClass): void
     {
-        if (!class_exists($kernelClass)) {
+        if (!\class_exists($kernelClass)) {
             throw new ClassNotFoundException($kernelClass);
         }
 
-        if (TestKernel::class !== $kernelClass && !in_array(TestKernel::class, class_parents($kernelClass))) {
+        if (TestKernel::class !== $kernelClass && !\in_array(TestKernel::class, \class_parents($kernelClass))) {
             throw new KernelNotSupportedException($kernelClass, TestKernel::class);
         }
     }

@@ -154,7 +154,7 @@ class KernelBuilderTest extends TestCase
     public function test_it_changes_the_temp_dir()
     {
         $builder = new KernelBuilder();
-        $builder->withTempDir($tempDir = sys_get_temp_dir().'/KernelBuilderTest');
+        $builder->withTempDir($tempDir = \sys_get_temp_dir().'/KernelBuilderTest');
 
         $kernel = $builder->bootKernel();
 
