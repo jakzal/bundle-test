@@ -7,10 +7,11 @@ matrix:
           env: deps=low
     fast_finish: true
 
-before_script:
-  - phpenv config-rm xdebug.ini
-  - if [[ $deps = low ]]; then composer update --prefer-lowest --prefer-stable; else composer install; fi
+before_install:
+    - phpenv config-rm xdebug.ini
+
+install:
+    - if [[ $deps = low ]]; then make update-min; else make install; fi
 
 script:
-  - ./vendor/bin/phpunit
-
+    - if [[ $deps = low ]]; then make test-min; else make test; fi
