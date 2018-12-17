@@ -26,11 +26,11 @@ test-min: update-min cs deptrac phpunit infection
 .PHONY: test-min
 
 cs: tools/php-cs-fixer
-	tools/php-cs-fixer --dry-run --allow-risky=yes --no-interaction --ansi fix
+	PHP_CS_FIXER_IGNORE_ENV=1 tools/php-cs-fixer --dry-run --allow-risky=yes --no-interaction --ansi fix
 .PHONY: cs
 
 cs-fix: tools/php-cs-fixer
-	tools/php-cs-fixer --allow-risky=yes --no-interaction --ansi fix
+	PHP_CS_FIXER_IGNORE_ENV=1 tools/php-cs-fixer --allow-risky=yes --no-interaction --ansi fix
 .PHONY: cs-fix
 
 deptrac: tools/deptrac
